@@ -86,10 +86,12 @@ df_act_all = df_act_all.fillna(df_act_all.median())
 
 #swod act
 df_act_swod = df_act[find_keys(find_keys(find_keys(df_act.keys(),'Composite'),'Disability'),'SwoD')]
-
+df_act_swod[df_act_swod.columns] = df_act_swod[df_act_swod.columns].apply(pd.to_numeric, errors='coerce')
+df_act_swod = df_act_swod.fillna(df_act_swod.median())
 #swd act
 df_act_swd = df_act[find_keys(find_keys(find_keys(df_act.keys(),'Composite'),'Disability'),'SwD')]
-
+df_act_swd[df_act_swd.columns] = df_act_swd[df_act_swd.columns].apply(pd.to_numeric, errors='coerce')
+df_act_swd = df_act_swd.fillna(df_act_swd.median())
 #objectives
 # act overall
 df_act_comp = df_act_all[find_keys(df_act_all.keys(),'Compos',3)]
@@ -124,6 +126,8 @@ X_train, X_test, y_train, y_test = train_test_split(x_np_fuller_stand, df_act_al
 
 y_train = y_train["('act_graduates_certified', 'All Students', 'All Students', 'Combined')"]
 y_test = y_test["('act_graduates_certified', 'All Students', 'All Students', 'Combined')"]
+X2_train, X2_test, y2_train, y2_test = train_test_split(x_np_fuller_stand, df_act_swod, test_size=0.2, random_state=0)
+X3_train, X3_test, y3_train, y3_test = train_test_split(x_np_fuller_stand, df_act_swd, test_size=0.2, random_state=0)
 
 pca = PCA(n_components=193)
 pca.fit(x_np_fuller_stand)
@@ -167,6 +171,17 @@ model = LinearRegression()
 model.fit(X_train, y_train)
 model.score(X_test, y_test)
 # 0.20757938708775936
+
+model2 = LinearRegression()
+model2.fit(X2_train, y2_train)
+model2.score(X2_test, y2_test)
+#0.2913721038226911
+
+model3 = LinearRegression()
+model3.fit(X3_train, y3_train)
+model3.score(X3_test, y3_test)
+#0.25573844935081314
+
 print('debug')
 
 scores = []
